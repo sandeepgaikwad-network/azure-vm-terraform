@@ -1,10 +1,16 @@
-Azure Virtual Machine Deployment with Terraform
-This repository contains step‑by‑step Terraform configurations to deploy an Azure Virtual Machine in Microsoft Azure.
-Each stage is modular, documented, and follows best practices for clarity, governance, and scalability.
+#!/bin/bash
+# Azure Virtual Machine Deployment with Terraform
+# Author: Sandeep Gaikwad
+# Purpose: Step-by-step setup of Azure VM using Terraform
 
-Step 1: Resource Group
+# -----------------------------
+# Step 1: Resource Group
+# -----------------------------
+# Purpose: Logical container for Azure resources
+# Use: Organizes resources by project, environment, and region
+# Best Practice: Apply tags for governance and cost tracking
 
-```hcl
+cat > resource_group.tf <<EOF
 resource "azurerm_resource_group" "rg" {
   name     = "rg-project-dev-southindia"
   location = var.location
@@ -15,17 +21,16 @@ resource "azurerm_resource_group" "rg" {
     Project     = var.project_name
   }
 }
+EOF
 
-📝 Notes
-Purpose: Logical container for Azure resources.
+# -----------------------------
+# Step 2: Virtual Network & Subnet
+# -----------------------------
+# Purpose: Provides private networking for the VM
+# Use: Subnets allow segmentation of workloads
+# Best Practice: Use non-overlapping CIDR ranges
 
-Use: Organizes resources by project, environment, and region.
-
-Best Practice: Apply tags for governance and cost tracking.
-
-Step 2: Virtual Network & Subnet
-
-```hcl
+cat > vnet_subnet.tf <<EOF
 resource "azurerm_virtual_network" "vnet" {
   name                = "vnet-${var.project_name}-${var.environment}-southindia"
   address_space       = var.vnet_address_space
@@ -39,22 +44,16 @@ resource "azurerm_subnet" "subnet" {
   virtual_network_name = azurerm_virtual_network.vnet.name
   address_prefixes     = var.subnet_prefix
 }
+EOF
 
-📝 Notes
-Purpose: Provides private networking for the VM.
+# -----------------------------
+# Step 3: Network Security Group (NSG)
+# -----------------------------
+# Purpose: Firewall for the VM
+# Use: Controls inbound/outbound traffic
+# Best Practice: Only open required ports
 
-Use: Subnets allow segmentation of workloads.
-
-Best Practice: Use non‑overlapping CIDR ranges to avoid conflicts.
-
-| Variable | Description | Default |
-| --- | --- | --- |
-| ``vnet_address_space`` | CIDR range for VNet | ``10.0.0.0/16`` |
-| ``subnet_prefix`` | CIDR range for Subnet | ``10.0.1.0/24`` |
-
-Step 3: Network Security Group (NSG)
-
-```hcl
+cat > nsg.tf <<EOF
 resource "azurerm_network_security_group" "nsg" {
   name                = "nsg-${var.project_name}-${var.environment}-southindia"
   location            = var.location
@@ -74,34 +73,32 @@ resource "azurerm_network_security_rule" "ssh" {
   network_security_group_name = azurerm_network_security_group.nsg.name
   resource_group_name         = azurerm_resource_group.rg.name
 }
+EOF
 
-📝 Notes
-Purpose: Firewall for the VM.
+# -----------------------------
+# Step 4: Public IP
+# -----------------------------
+# Purpose: Provides external connectivity
+# Use: Required for remote access
+# Best Practice: Use static IPs for production workloads
 
-Use: Controls inbound/outbound traffic.
-
-Best Practice: Only open required ports (SSH/22, RDP/3389).
-
-Step 4: Public IP
-
-```hcl
+cat > public_ip.tf <<EOF
 resource "azurerm_public_ip" "pip" {
   name                = "pip-${var.project_name}-${var.environment}-southindia"
   location            = var.location
   resource_group_name = azurerm_resource_group.rg.name
   allocation_method   = "Dynamic"
 }
+EOF
 
-📝 Notes
-Purpose: Provides external connectivity.
+# -----------------------------
+# Step 5: Network Interface (NIC)
+# -----------------------------
+# Purpose: Connects VM to subnet and public IP
+# Use: Acts as the VM’s network card
+# Best Practice: Attach NSG to NIC or subnet
 
-Use: Required for remote access.
-
-Best Practice: Use static IPs for production workloads.
-
-Step 5: Network Interface (NIC)
-
-```hcl
+cat > network_interface.tf <<EOF
 resource "azurerm_network_interface" "nic" {
   name                = "nic-${var.project_name}-${var.environment}-southindia"
   location            = var.location
@@ -114,17 +111,16 @@ resource "azurerm_network_interface" "nic" {
     public_ip_address_id          = azurerm_public_ip.pip.id
   }
 }
+EOF
 
-📝 Notes
-Purpose: Connects VM to subnet and public IP.
+# -----------------------------
+# Step 6: Virtual Machine
+# -----------------------------
+# Purpose: Core compute resource
+# Use: Runs workloads in Azure
+# Best Practice: Use SSH keys instead of passwords
 
-Use: Acts as the VM’s network card.
-
-Best Practice: Attach NSG to NIC or subnet for security.
-
-Step 6: Virtual Machine
-
-```hcl
+cat > virtual_machine.tf <<EOF
 resource "azurerm_linux_virtual_machine" "vm" {
   name                = "vm-${var.project_name}-${var.environment}-southindia"
   resource_group_name = azurerm_resource_group.rg.name
@@ -151,17 +147,11 @@ resource "azurerm_linux_virtual_machine" "vm" {
     public_key = file(var.ssh_public_key_path)
   }
 }
+EOF
 
-📝 Notes
-Purpose: Core compute resource.
-
-Use: Runs workloads in Azure.
-
-Best Practice: Use SSH keys instead of passwords.
-
-Tip: Start with small VM sizes for dev/test, scale later.
-
-✅ Deployment Instructions
+# -----------------------------
+# Deployment Instructions
+# -----------------------------
 # Authenticate with Azure
 az login
 
@@ -173,9 +163,3 @@ terraform plan
 
 # Apply configuration
 terraform apply
-
-📘 Summary
-This project demonstrates a modular, professional Terraform setup for deploying an Azure VM.
-Each step builds on the previous one, ensuring clarity, scalability, and best practices in cloud infrastructure.
-
-![Architecture Diagram](image.png)
