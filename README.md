@@ -25,6 +25,8 @@ Use: Helps organize resources by project, environment, and region.
 Best Practice: Apply tags for governance, cost tracking, and ownership.
 
 ## Step 2: Virtual Network & Subnet
+
+```hcl
 resource "azurerm_virtual_network" "vnet" {
   name                = "vnet-${var.project_name}-${var.environment}-southindia"
   address_space       = var.vnet_address_space
