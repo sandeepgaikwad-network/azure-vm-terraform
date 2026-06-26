@@ -3,6 +3,8 @@ This repository contains step‑by‑step Terraform configurations to deploy an 
 Each stage is modular, documented, and follows best practices for clarity, governance, and scalability.
 
 Step 1: Resource Group
+
+```hcl
 resource "azurerm_resource_group" "rg" {
   name     = "rg-project-dev-southindia"
   location = var.location
@@ -22,6 +24,8 @@ Use: Organizes resources by project, environment, and region.
 Best Practice: Apply tags for governance and cost tracking.
 
 Step 2: Virtual Network & Subnet
+
+```hcl
 resource "azurerm_virtual_network" "vnet" {
   name                = "vnet-${var.project_name}-${var.environment}-southindia"
   address_space       = var.vnet_address_space
@@ -49,6 +53,8 @@ Best Practice: Use non‑overlapping CIDR ranges to avoid conflicts.
 | ``subnet_prefix`` | CIDR range for Subnet | ``10.0.1.0/24`` |
 
 Step 3: Network Security Group (NSG)
+
+```hcl
 resource "azurerm_network_security_group" "nsg" {
   name                = "nsg-${var.project_name}-${var.environment}-southindia"
   location            = var.location
@@ -77,6 +83,8 @@ Use: Controls inbound/outbound traffic.
 Best Practice: Only open required ports (SSH/22, RDP/3389).
 
 Step 4: Public IP
+
+```hcl
 resource "azurerm_public_ip" "pip" {
   name                = "pip-${var.project_name}-${var.environment}-southindia"
   location            = var.location
@@ -92,6 +100,8 @@ Use: Required for remote access.
 Best Practice: Use static IPs for production workloads.
 
 Step 5: Network Interface (NIC)
+
+```hcl
 resource "azurerm_network_interface" "nic" {
   name                = "nic-${var.project_name}-${var.environment}-southindia"
   location            = var.location
@@ -113,6 +123,8 @@ Use: Acts as the VM’s network card.
 Best Practice: Attach NSG to NIC or subnet for security.
 
 Step 6: Virtual Machine
+
+```hcl
 resource "azurerm_linux_virtual_machine" "vm" {
   name                = "vm-${var.project_name}-${var.environment}-southindia"
   resource_group_name = azurerm_resource_group.rg.name
