@@ -9,6 +9,7 @@ Each stage is modular, documented, and follows best practices for clarity, gover
 
 Step 1: Resource Group
 
+```hcl
 resource "azurerm_resource_group" "rg" {
   name     = "rg-project-dev-southindia"
   location = var.location
@@ -27,6 +28,7 @@ Best Practice: Apply tags for governance, cost tracking, and ownership.
 
 Step 2: Virtual Network & Subnet
 
+```hcl
 resource "azurerm_virtual_network" "vnet" {
   name                = "vnet-${var.project_name}-${var.environment}-southindia"
   address_space       = var.vnet_address_space
