@@ -26,7 +26,7 @@ Purpose: Resource Groups are logical containers for Azure resources.
 Use: Helps organize resources by project, environment, and region.
 Best Practice: Apply tags for governance, cost tracking, and ownership.
 
-Step 2: Virtual Network & Subnet
+**Step 2: Virtual Network & Subnet**
 
 ```hcl
 resource "azurerm_virtual_network" "vnet" {
@@ -43,7 +43,7 @@ resource "azurerm_subnet" "subnet" {
   address_prefixes     = var.subnet_prefix
 }
 
-📝 Notes
+**📝 Notes**
 Purpose: Provides private networking for the VM.
 Use: Subnets allow segmentation of workloads.
 Best Practice: Use non-overlapping CIDR ranges to avoid conflicts.
