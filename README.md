@@ -5,8 +5,9 @@ Each stage is modular, documented, and follows best practices for clarity, gover
 
 ---
 
-## Step 1: Resource Group
+## Terraform script for creating all the resources step by step
 
+Step 1: Resource Group
 ```hcl
 resource "azurerm_resource_group" "rg" {
   name     = "rg-project-dev-southindia"
