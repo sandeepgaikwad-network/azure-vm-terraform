@@ -8,7 +8,7 @@ Each stage is modular, documented, and follows best practices for clarity, gover
 ## Terraform script for creating all the resources step by step
 
 Step 1: Resource Group
-```hcl
+
 resource "azurerm_resource_group" "rg" {
   name     = "rg-project-dev-southindia"
   location = var.location
@@ -25,9 +25,8 @@ Purpose: Resource Groups are logical containers for Azure resources.
 Use: Helps organize resources by project, environment, and region.
 Best Practice: Apply tags for governance, cost tracking, and ownership.
 
-## Step 2: Virtual Network & Subnet
+Step 2: Virtual Network & Subnet
 
-```hcl
 resource "azurerm_virtual_network" "vnet" {
   name                = "vnet-${var.project_name}-${var.environment}-southindia"
   address_space       = var.vnet_address_space
